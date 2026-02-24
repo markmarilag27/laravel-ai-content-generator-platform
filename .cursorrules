@@ -1,0 +1,12 @@
+# AI Context Bridge
+
+## 🧠 Core Directive
+Always refer to the canonical project rules defined in `CLAUDE.md` before generating any code or proposing architectural changes.
+
+## 🎯 Project-Specific Context
+- This is a Laravel 12 Monolith using Vue 3.
+
+## 🛠️ Tooling
+- Use the Laravel Boost MCP server when available.
+- Run `vendor/bin/pint` for PHP style compliance.
+- Run `npm run lint` for Vue/TypeScript compliance.

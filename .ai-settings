@@ -1,0 +1,11 @@
+{
+  "project_rules_path": "./CLAUDE.md",
+  "tech_stack": [
+    "Laravel 12",
+    "Vue 3 SPA",
+    "Tailwind 4"
+  ],
+  "global_constraints": [
+    "Do not use Sanctum"
+  ]
+}
