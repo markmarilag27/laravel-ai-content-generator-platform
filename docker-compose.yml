@@ -10,7 +10,7 @@ services:
     tty: true
     ports:
       - 8080:8080
-      - "${REVERB_PORT:-6001}:6001"
+      - '${REVERB_PORT:-6001}:6001'
     volumes:
       - ./:/var/www/html
       - ./.docker/php.ini:/usr/local/etc/php/conf.d/99-php.ini
