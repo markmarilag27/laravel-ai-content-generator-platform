@@ -1,17 +1,27 @@
 #!/bin/bash
 set -e
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-    -- 1. Create the application user using the DB_USERNAME from your .env
-    -- We use the shell variable $POSTGRES_USER to log in as the superuser first
-    CREATE USER "$DB_USERNAME" WITH PASSWORD '$DB_PASSWORD';
+echo "Starting custom database initialization..."
 
-    -- 2. Grant permissions on the database created by Docker
-    GRANT ALL PRIVILEGES ON DATABASE "$POSTGRES_DB" TO "$DB_USERNAME";
+# 1. Create the application user and set permissions (ignores error if user exists)
+psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "CREATE USER \"$DB_USERNAME\" WITH PASSWORD '$DB_PASSWORD';" || true
+psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "ALTER USER \"$DB_USERNAME\" NOSUPERUSER;" || true
 
-    -- 3. Grant schema permissions
-    GRANT ALL ON SCHEMA public TO "$DB_USERNAME";
+# 2. Check if the multiple databases variable exists
+if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
+    echo "Multiple databases requested: $POSTGRES_MULTIPLE_DATABASES"
 
-    -- 4. Ensure it is NOT a superuser so RLS works
-    ALTER USER "$DB_USERNAME" NOSUPERUSER;
-EOSQL
+    # Split the comma-separated string into an array and loop through it
+    IFS=',' read -ra DBOBJ <<< "$POSTGRES_MULTIPLE_DATABASES"
+    for db in "${DBOBJ[@]}"; do
+        echo "Creating database: $db..."
+
+        # Create the database and grant privileges (ignores errors if it already exists)
+        psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "CREATE DATABASE $db;" || true
+        psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "GRANT ALL PRIVILEGES ON DATABASE $db TO \"$DB_USERNAME\";" || true
+    done
+
+    echo "Databases created successfully!"
+else
+    echo "No extra databases defined in POSTGRES_MULTIPLE_DATABASES."
+fi
