@@ -1,27 +1,25 @@
 #!/bin/bash
 set -e
 
-echo "Starting custom database initialization..."
+# 1. Configure the application user
+echo "  ↳ Creating app user: ${DB_USERNAME}"
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" <<-EOSQL
+    CREATE USER "$DB_USERNAME" WITH PASSWORD '$DB_PASSWORD';
+    ALTER USER "$DB_USERNAME" NOSUPERUSER CREATEDB;
+EOSQL
 
-# 1. Create the application user and set permissions (ignores error if user exists)
-psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "CREATE USER \"$DB_USERNAME\" WITH PASSWORD '$DB_PASSWORD';" || true
-psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "ALTER USER \"$DB_USERNAME\" NOSUPERUSER;" || true
-
-# 2. Check if the multiple databases variable exists
+# 2. Provision databases
 if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
-    echo "Multiple databases requested: $POSTGRES_MULTIPLE_DATABASES"
+    IFS=',' read -ra DBNAMES <<< "$POSTGRES_MULTIPLE_DATABASES"
+    for db in "${DBNAMES[@]}"; do
+        db=$(echo "$db" | xargs)
+        if [ -n "$db" ]; then
+            echo "    -> Setting up database: $db"
+            psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "CREATE DATABASE $db;" || true
 
-    # Split the comma-separated string into an array and loop through it
-    IFS=',' read -ra DBOBJ <<< "$POSTGRES_MULTIPLE_DATABASES"
-    for db in "${DBOBJ[@]}"; do
-        echo "Creating database: $db..."
+            psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -c "ALTER DATABASE $db OWNER TO \"$DB_USERNAME\";"
 
-        # Create the database and grant privileges (ignores errors if it already exists)
-        psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "CREATE DATABASE $db;" || true
-        psql -v ON_ERROR_STOP=0 -U "$POSTGRES_USER" -c "GRANT ALL PRIVILEGES ON DATABASE $db TO \"$DB_USERNAME\";" || true
+            echo "    -> Ownership of $db transferred to $DB_USERNAME"
+        fi
     done
-
-    echo "Databases created successfully!"
-else
-    echo "No extra databases defined in POSTGRES_MULTIPLE_DATABASES."
 fi

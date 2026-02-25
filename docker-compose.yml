@@ -52,11 +52,12 @@ services:
     ports:
       - ${DB_PORT:-5432}:5432
     environment:
-      - PGPASSWORD=${DB_PASSWORD:-P@ssw0rd}
-      - POSTGRES_DB=${DB_DATABASE:-postgresql}
-      - POSTGRES_USER=${DB_USERNAME:-postgresql}
+      - POSTGRES_DB=${DB_DATABASE:-laravel}
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${DB_PASSWORD:-P@ssw0rd}
-      - POSTGRES_MULTIPLE_DATABASES=${DB_DATABASE:-postgresql},postgresql_testing
+      - DB_USERNAME=${DB_USERNAME:-laravel}
+      - DB_PASSWORD=${DB_PASSWORD:-P@ssw0rd}
+      - POSTGRES_MULTIPLE_DATABASES=${DB_DATABASE:-laravel},laravel_testing
     volumes:
       - postgres:/var/lib/postgresql/data
       - ./.docker/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh

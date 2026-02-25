@@ -8,6 +8,7 @@ use App\Models\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -17,6 +18,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BrandVoiceProfile> $brandVoiceProfiles
+ * @property-read int|null $brand_voice_profiles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CampaignItem> $campaignItems
+ * @property-read int|null $campaign_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Campaign> $campaigns
+ * @property-read int|null $campaigns_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditLedger> $creditLedgers
+ * @property-read int|null $credit_ledgers_count
  * @property-read \App\Models\WorkspaceUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
@@ -71,5 +80,25 @@ class Workspace extends Model
             ->using(WorkspaceUser::class)
             ->withPivot('role')
             ->withTimestamps();
+    }
+
+    public function brandVoiceProfiles(): HasMany
+    {
+        return $this->hasMany(BrandVoiceProfile::class);
+    }
+
+    public function creditLedgers(): HasMany
+    {
+        return $this->hasMany(CreditLedger::class);
+    }
+
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
+    }
+
+    public function campaignItems(): HasMany
+    {
+        return $this->hasMany(CampaignItem::class);
     }
 }

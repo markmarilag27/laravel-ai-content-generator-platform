@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\Traits\BelongsToWorkspace;
 use App\Models\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,6 +28,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \App\Models\Workspace|null $workspace
  * @property-read \App\Models\WorkspaceUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Workspace> $workspaces
  * @property-read int|null $workspaces_count
@@ -53,7 +57,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasPublicId, Notifiable, SoftDeletes;
+    use BelongsToWorkspace, HasFactory, HasPublicId, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
