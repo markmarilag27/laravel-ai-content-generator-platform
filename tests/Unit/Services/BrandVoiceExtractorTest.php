@@ -19,14 +19,14 @@ class BrandVoiceExtractorTest extends TestCase
             $mock->shouldReceive('chat')
                 ->once()
                 ->with(
-                    Mockery::on(fn($prompt) => str_contains($prompt, 'linguistics expert')),
-                    Mockery::on(fn($samples) => str_contains($samples, 'Sample 1'))
+                    Mockery::on(fn ($prompt) => str_contains($prompt, 'linguistics expert')),
+                    Mockery::on(fn ($samples) => str_contains($samples, 'Sample 1'))
                 )
                 ->andReturn([
                     'tone' => 'Professional',
                     'formality' => 8,
                     'patterns' => ['Bullet points', 'Oxford commas'],
-                    'persona' => 'A seasoned editor'
+                    'persona' => 'A seasoned editor',
                 ]);
         });
 

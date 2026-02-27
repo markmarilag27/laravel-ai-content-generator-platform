@@ -30,7 +30,7 @@ class BrandVoiceGenerator
 
         // Check the Quality Gate
         $quality = $this->ai->chat(
-            "Compare this text to this profile: " . json_encode($profile),
+            'Compare this text to this profile: '.json_encode($profile),
             "Text: {$content}. Return JSON with 'match_score' (1-100)."
         );
 

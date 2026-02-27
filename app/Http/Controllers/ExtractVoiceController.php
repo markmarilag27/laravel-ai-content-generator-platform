@@ -28,7 +28,7 @@ class ExtractVoiceController extends Controller
 
         return response()->json([
             'message' => 'Brand voice extracted successfully.',
-            'data' => $profile
+            'data' => $profile,
         ], 201);
     }
 }

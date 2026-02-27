@@ -39,14 +39,14 @@ class BrandVoiceGeneratorTest extends TestCase
             'profile' => [
                 'tone' => 'Witty',
                 'persona' => 'Comedian',
-                'formality' => 5
-            ]
+                'formality' => 5,
+            ],
         ]);
 
         // Act
         $result = $generator->generate($profile, [
             'topic' => 'Laravel',
-            'word_count' => 100
+            'word_count' => 100,
         ]);
 
         // Assert

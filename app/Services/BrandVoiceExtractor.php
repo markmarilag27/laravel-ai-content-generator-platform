@@ -13,7 +13,7 @@ class BrandVoiceExtractor
 
     public function extract(array $samples): array
     {
-        $systemPrompt = <<<PROMPT
+        $systemPrompt = <<<'PROMPT'
         You are a linguistics expert. Analyze the provided text samples to create a structured Brand Voice Profile.
         Return ONLY a JSON object with these keys:
         - tone: (string) The emotional quality (e.g., "Professional yet witty")
@@ -22,7 +22,7 @@ class BrandVoiceExtractor
         - persona: (string) A 1-sentence description of the 'author'
         PROMPT;
 
-        $userPrompt = "Analyze these samples: \n\n" . implode("\n---\n", $samples);
+        $userPrompt = "Analyze these samples: \n\n".implode("\n---\n", $samples);
 
         $rawJsonResponse = $this->ai->chat($systemPrompt, $userPrompt);
 
