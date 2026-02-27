@@ -71,30 +71,25 @@ return new class extends Migration
      */
     protected function resolvePolicyCondition(string $table): string
     {
-        // Category: The Parent (Workspaces)
-        // Needs to be visible if no workspace is active (to create/list) or matches current context.
-        if ($table === 'workspaces') {
+        $currentWorkspace = "NULLIF(NULLIF(current_setting('app.current_workspace_id', TRUE), '0'), '')";
+        $currentUser = "NULLIF(NULLIF(current_setting('app.current_user_id', TRUE), '0'), '')";
+
+        // The Super Admin bypass check
+        $superAdminCheck = "current_setting('app.is_super_admin', TRUE) = 'true'";
+
+        if (in_array($table, ['workspaces', 'users', 'workspace_user'])) {
+            $idColumn = ($table === 'workspaces') ? 'id' : 'workspace_id';
+
             return "
-                current_setting('app.current_workspace_id', TRUE) IN ('0', '')
-                OR id = NULLIF(current_setting('app.current_workspace_id', TRUE), '')::bigint
-            ";
+            {$superAdminCheck}
+            OR current_setting('app.current_workspace_id', TRUE) IN ('0', '')
+            OR {$idColumn} = ({$currentWorkspace})::bigint
+            ".($table === 'users' ? "OR id = ({$currentUser})::bigint" : '');
         }
 
-        // Category: The Identity (Users)
-        // A user must see themselves (to log in) OR people in their current active workspace.
-        if ($table === 'users') {
-            return "
-                current_setting('app.current_workspace_id', TRUE) = '0'
-                OR workspace_id = NULLIF(current_setting('app.current_workspace_id', TRUE), '')::bigint
-                OR id = NULLIF(current_setting('app.current_user_id', TRUE), '')::bigint
-            ";
-        }
-
-        // Category: The Children & Pivot (workspace_user, campaigns, ledgers, etc.)
-        // These are strictly locked to the active workspace context.
         return "
-            current_setting('app.current_workspace_id', TRUE) = '0'
-            OR workspace_id = NULLIF(current_setting('app.current_workspace_id', TRUE), '')::bigint
+        {$superAdminCheck}
+            OR workspace_id = ({$currentWorkspace})::bigint
         ";
     }
 };

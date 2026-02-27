@@ -31,7 +31,8 @@ class WorkspaceScopeMiddleware
 
         $this->setPostgresContext(
             userId: $user?->id,
-            workspaceId: $user?->workspace_id
+            workspaceId: $user?->workspace_id,
+            isSuperAdmin: $user?->is_super_admin ?? false
         );
 
         return $next($request);

@@ -9,6 +9,8 @@ abstract class TestCase extends BaseTestCase
 {
     use InteractsWithPostgresRls;
 
+    protected $seed = true;
+
     protected function setUp(): void
     {
         parent::setUp();

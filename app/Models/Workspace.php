@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property string $public_id
+ * @property int $plan_id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -26,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $campaigns_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditLedger> $creditLedgers
  * @property-read int|null $credit_ledgers_count
+ * @property-read \App\Models\Plan $plan
  * @property-read \App\Models\WorkspaceUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
@@ -39,6 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace wherePlanId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace wherePublicId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workspace withTrashed(bool $withTrashed = true)
@@ -80,6 +84,11 @@ class Workspace extends Model
             ->using(WorkspaceUser::class)
             ->withPivot('role')
             ->withTimestamps();
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 
     public function brandVoiceProfiles(): HasMany
