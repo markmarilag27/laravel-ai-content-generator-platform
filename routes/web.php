@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ExtractVoiceController;
 use App\Http\Controllers\GenerateContentController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,15 @@ Route::prefix('api')->group(function () {
              * Uses a profile to generate text with the Quality Gate loop.
              */
             Route::post('generate/{profile}', GenerateContentController::class)->name('generate');
+        });
+        /**
+         **************************************************************************************
+         * Campaigns
+         **************************************************************************************
+         */
+        Route::name('campaigns.')->prefix('campaigns')->group(function () {
+            // Store new campaigns
+            Route::post('{profile}', CampaignController::class)->name('store');
         });
     });
 

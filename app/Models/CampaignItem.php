@@ -17,9 +17,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $workspace_id
  * @property int $campaign_id
  * @property string $content_type
- * @property string|null $output
+ * @property string $topic
+ * @property int $word_count
+ * @property array<array-key, mixed>|null $output
+ * @property int $tokens_used
  * @property CampaignStatus $status
  * @property int $retry_count
+ * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Campaign $campaign
@@ -32,12 +36,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereCampaignId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereContentType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereErrorMessage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereOutput($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem wherePublicId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereRetryCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereTokensUsed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereTopic($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereWordCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereWorkspaceId($value)
  *
  * @mixin \Eloquent
@@ -56,9 +64,13 @@ class CampaignItem extends Model
         'workspace_id',
         'campaign_id',
         'content_type',
+        'topic',
+        'word_count',
         'output',
+        'tokens_used',
         'status',
         'retry_count',
+        'error_message',
     ];
 
     /**
@@ -81,6 +93,7 @@ class CampaignItem extends Model
     {
         return [
             'status' => CampaignStatus::class,
+            'output' => 'array',
         ];
     }
 

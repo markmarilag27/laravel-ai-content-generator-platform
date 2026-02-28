@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Workspace::class)->constrained()->cascadeOnDelete();
             $table->integer('amount');
             $table->string('type', 255);
-            $table->string('description', 255)->nullable();
+            $table->longText('description')->nullable();
             $table->jsonb('metadata')->nullable();
             $table->nullableMorphs('reference');
             $table->timestamps();

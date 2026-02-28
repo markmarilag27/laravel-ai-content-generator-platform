@@ -20,9 +20,13 @@ return new class extends Migration
             $table->foreignIdFor(Workspace::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Campaign::class)->constrained()->cascadeOnDelete();
             $table->string('content_type', 255);
-            $table->text('output')->nullable();
+            $table->string('topic');
+            $table->integer('word_count');
+            $table->jsonb('output')->nullable();
+            $table->integer('tokens_used')->default(0);
             $table->enum('status', CampaignStatus::values());
-            $table->integer('retry_count');
+            $table->integer('retry_count')->default(0);
+            $table->text('error_message')->nullable();
             $table->timestamps();
         });
     }

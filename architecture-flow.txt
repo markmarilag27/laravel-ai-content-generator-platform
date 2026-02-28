@@ -1,0 +1,32 @@
++-------------------+       HTTP / POST       +-------------------------+
+|                   |   JSON Campaign Brief   |                         |
+|    Vue 3 SPA      | ----------------------> |   CampaignController    |
+|   (Power User)    |                         |  (Creates Campaign Row) |
+|                   |                         +-----------+-------------+
++--------^----------+                                     |
+         |                                         Dispatches Job
+         |                                                |
+         |                                  +-------------v-------------+
+         |                                  |                           |
+         |                                  |   DecomposeCampaignJob    |
+         |                                  |                           |
+         |                                  +----+--------+--------+----+
+         |                                       |        |        |
+         |                                    DB Inserts  |   Creates Batch
+         |                                       |        |        |
+         |           +-----------------------+   |        |        |
+         |           |   PostgreSQL (RLS)    | <-+        |        |
+         |           | - campaign_items (10) |            |        |
+         |           +-----------------------+            |        |
+         |                                                v        v
+         |                                    +-------------------------+
+         |                                    |       Redis Queue       |
+         |                                    | (GenerateContentJob x10)|
+         |                                    +-----------+-------------+
+         |                                                |
+  Pusher / Reverb                                 Workers Pick Up
+         |                                                |
+         |                                  +-------------v-------------+
+         +--------------------------------- | GenerateContentJob (1..10)|
+            (CampaignStatusUpdated Event)   |  (Calls OpenAI Provider)  |
+            % Complete, Status Arrays       +---------------------------+

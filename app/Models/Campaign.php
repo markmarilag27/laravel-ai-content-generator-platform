@@ -9,17 +9,22 @@ use App\Models\Traits\BelongsToWorkspace;
 use App\Models\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
  * @property string $public_id
  * @property int $workspace_id
+ * @property int $brand_voice_profile_id
  * @property string $title
- * @property string $brief
+ * @property array<array-key, mixed> $brief
+ * @property string|null $job_batch_id
+ * @property \Illuminate\Support\Carbon|null $deadline
  * @property CampaignStatus $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\BrandVoiceProfile $brandVoiceProfile
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CampaignItem> $campaignItems
  * @property-read int|null $campaign_items_count
  * @property-read \App\Models\Workspace $workspace
@@ -28,9 +33,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereBrandVoiceProfileId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereBrief($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereDeadline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereJobBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign wherePublicId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereTitle($value)
@@ -51,10 +59,12 @@ class Campaign extends Model
      */
     protected $fillable = [
         'workspace_id',
+        'brand_voice_profile_id',
         'title',
         'brief',
         'status',
-        'reference',
+        'job_batch_id',
+        'deadline',
     ];
 
     /**
@@ -65,6 +75,8 @@ class Campaign extends Model
     protected $hidden = [
         'id',
         'workspace_id',
+        'brand_voice_profile_id',
+        'job_batch_id',
     ];
 
     /**
@@ -76,6 +88,8 @@ class Campaign extends Model
     {
         return [
             'status' => CampaignStatus::class,
+            'brief' => 'array',
+            'deadline' => 'datetime',
         ];
     }
 
@@ -84,6 +98,16 @@ class Campaign extends Model
      * Relationships
      **********************************************************
      */
+    public function workspace(): BelongsTo
+    {
+        return $this->belongsTo(Workspace::class);
+    }
+
+    public function brandVoiceProfile(): BelongsTo
+    {
+        return $this->belongsTo(BrandVoiceProfile::class);
+    }
+
     public function campaignItems(): HasMany
     {
         return $this->hasMany(CampaignItem::class);
