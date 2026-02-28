@@ -11,6 +11,11 @@ class BrandVoiceExtractor
 {
     public function __construct(protected AIProvider $ai) {}
 
+    /**
+     * Extracts a voice profile and returns it along with token usage.
+     *
+     * @return array{profile: array, tokens: int}
+     */
     public function extract(array $samples): array
     {
         $systemPrompt = <<<'PROMPT'
@@ -24,8 +29,17 @@ class BrandVoiceExtractor
 
         $userPrompt = "Analyze these samples: \n\n".implode("\n---\n", $samples);
 
-        $rawJsonResponse = $this->ai->chat($systemPrompt, $userPrompt);
+        // Get the full response from the AI Provider
+        $response = $this->ai->chat($systemPrompt, $userPrompt);
 
-        return Toon::decode(Toon::encode($rawJsonResponse));
+        // Separate the actual profile from the usage metadata
+        // We use Toon here to 'bless' the profile data as requested
+        $profile = Toon::decode(Toon::encode($response['content'] ?? []));
+        $tokens = $response['usage']['total_tokens'] ?? 0;
+
+        return [
+            'profile' => $profile,
+            'tokens' => $tokens,
+        ];
     }
 }

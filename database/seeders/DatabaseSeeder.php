@@ -7,19 +7,18 @@ use App\Enums\UserRole;
 use App\Models\Plan;
 use App\Models\User;
 use App\Models\Workspace;
-use App\Traits\Database\InteractsWithPostgresRls;
+use App\Services\CreditService;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    use InteractsWithPostgresRls;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        $this->setPostgresContext();
+        DB::statement("SET app.is_super_admin = 'true'");
 
         $this->call([
             PlanSeeder::class,
@@ -48,6 +47,10 @@ class DatabaseSeeder extends Seeder
             'role' => UserRole::Admin,
             'workspace_id' => $workspace->id,
         ]);
+
+        (new CreditService)->ensureMonthlyAllotment($workspace);
+
+        DB::statement("SET app.is_super_admin = 'false'");
 
         $this->command->info('Seeding complete. Workspace and User created with RLS bypassed.');
     }

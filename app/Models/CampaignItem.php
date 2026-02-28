@@ -53,6 +53,8 @@ class CampaignItem extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'workspace_id',
+        'campaign_id',
         'content_type',
         'output',
         'status',
@@ -66,6 +68,8 @@ class CampaignItem extends Model
      */
     protected $hidden = [
         'id',
+        'workspace_id',
+        'campaign_id',
     ];
 
     /**

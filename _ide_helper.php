@@ -23395,6 +23395,75 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace MischaSigtermans\Toon\Facades {
+    /**
+     */
+    class Toon {
+        /**
+         * @static
+         */
+        public static function encode($data)
+        {
+            /** @var \MischaSigtermans\Toon\Toon $instance */
+            return $instance->encode($data);
+        }
+
+        /**
+         * @static
+         */
+        public static function decode($toon)
+        {
+            /** @var \MischaSigtermans\Toon\Toon $instance */
+            return $instance->decode($toon);
+        }
+
+        /**
+         * Estimate token savings between JSON and TOON formats.
+         *
+         * @return \MischaSigtermans\Toon\array{json_chars: int, toon_chars: int, saved_chars: int, savings_percent: float}
+         * @static
+         */
+        public static function diff($data)
+        {
+            /** @var \MischaSigtermans\Toon\Toon $instance */
+            return $instance->diff($data);
+        }
+
+        /**
+         * Encode only specific keys from the data.
+         *
+         * @static
+         */
+        public static function only($data, $keys)
+        {
+            /** @var \MischaSigtermans\Toon\Toon $instance */
+            return $instance->only($data, $keys);
+        }
+
+            }
+    }
+
+namespace Illuminate\Support {
+    /**
+     * @template TKey of array-key
+     * @template-covariant TValue
+     * @implements \ArrayAccess<TKey, TValue>
+     * @implements \Illuminate\Support\Enumerable<TKey, TValue>
+     */
+    class Collection {
+        /**
+         * @see \MischaSigtermans\Toon\ToonServiceProvider::boot()
+         * @return string
+         * @static
+         */
+        public static function toToon()
+        {
+            return \Illuminate\Support\Collection::toToon();
+        }
+
+            }
+    }
+
 namespace Illuminate\Http {
     /**
      */
@@ -25477,6 +25546,16 @@ namespace  {
         {
             /** @var \Illuminate\Database\Eloquent\Builder $instance */
             return $instance->mergeConstraintsFrom($from);
+        }
+
+        /**
+         * @see \MischaSigtermans\Toon\ToonServiceProvider::boot()
+         * @return string
+         * @static
+         */
+        public static function toToon()
+        {
+            return \Illuminate\Database\Eloquent\Builder::toToon();
         }
 
         /**
@@ -28517,6 +28596,7 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
+    class Toon extends \MischaSigtermans\Toon\Facades\Toon {}
 }
 
 

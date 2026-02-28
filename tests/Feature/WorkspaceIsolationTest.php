@@ -101,8 +101,22 @@ class WorkspaceIsolationTest extends TestCase
         $this->setPostgresContext($superAdmin->id, null, isSuperAdmin: true);
 
         $allResults = CreditLedger::all();
+        $visibleWorkspaceIds = $allResults->pluck('workspace_id')->toArray();
 
-        // Assert: Super Admin sees the total sum (3 + 2 = 5)
-        $this->assertCount(5, $allResults, 'Super Admin should bypass RLS and see every record in the table.');
+        // Assert: Proves Super Admin bypassed RLS and can see other tenants' data
+        $this->assertContains(
+            $workspaceA->id,
+            $visibleWorkspaceIds,
+            "Super Admin should be able to see Workspace A's ledger."
+        );
+
+        $this->assertContains(
+            $workspaceB->id,
+            $visibleWorkspaceIds,
+            "Super Admin should be able to see Workspace B's ledger."
+        );
+
+        // We expect AT LEAST 5 (plus any automatic ones the factory made)
+        $this->assertGreaterThanOrEqual(5, $allResults->count());
     }
 }

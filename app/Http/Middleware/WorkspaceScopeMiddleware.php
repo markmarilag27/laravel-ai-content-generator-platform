@@ -22,12 +22,12 @@ class WorkspaceScopeMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var ?User $user */
-        $user = Auth::user();
-
         if ($request->is('telescope*', 'horizon*', 'nova*')) {
             return $next($request);
         }
+
+        /** @var ?User $user */
+        $user = Auth::user();
 
         $this->setPostgresContext(
             userId: $user?->id,

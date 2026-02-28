@@ -16,7 +16,7 @@ class OpenAIProvider implements AIProvider
 
     public function chat(string $systemPrompt, string $userPrompt): array
     {
-        $response = $this->client->chat()->create([
+        $apiResponse = $this->client->chat()->create([
             'model' => $this->model,
             'messages' => [
                 ['role' => 'system', 'content' => $systemPrompt],
@@ -25,6 +25,12 @@ class OpenAIProvider implements AIProvider
             'response_format' => ['type' => 'json_object'],
         ]);
 
-        return json_decode($response->choices[0]->message->content, true);
+        // Return the exact structure the Extractor and Generator expect
+        return [
+            'content' => json_decode($apiResponse->choices[0]->message->content, true),
+            'usage' => [
+                'total_tokens' => $apiResponse->usage->totalTokens ?? 0,
+            ],
+        ];
     }
 }

@@ -50,6 +50,7 @@ class CreditLedger extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'workspace_id',
         'amount',
         'type',
         'description',
@@ -63,6 +64,7 @@ class CreditLedger extends Model
      */
     protected $hidden = [
         'id',
+        'iworkspace_id',
     ];
 
     /**

@@ -50,6 +50,7 @@ class BrandVoiceProfile extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'workspace_id',
         'name',
         'profile',
     ];
@@ -61,6 +62,7 @@ class BrandVoiceProfile extends Model
      */
     protected $hidden = [
         'id',
+        'workspace_id',
     ];
 
     /**

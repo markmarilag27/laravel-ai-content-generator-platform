@@ -79,6 +79,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'id',
+        'workspace_id',
         'password',
         'remember_token',
         'is_super_admin',

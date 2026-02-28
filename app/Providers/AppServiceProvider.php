@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Contracts\AIProvider;
+use App\Services\AI\OpenAIProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use OpenAI;
+use OpenAI\Client;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +22,12 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
             }
         }
+
+        $this->app->singleton(Client::class, function () {
+            return OpenAI::client(config('openai.api_key'));
+        });
+
+        $this->app->bind(AIProvider::class, OpenAIProvider::class);
     }
 
     /**
