@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Enums\CampaignStatus;
+use App\Events\CampaignStatusUpdated;
 use App\Jobs\Middleware\TenantScopeJobMiddleware;
+use App\Models\Campaign;
 use App\Models\CampaignItem;
 use App\Services\BrandVoiceGenerator;
 use App\Services\CreditService;
@@ -91,7 +93,7 @@ class GenerateContentJob implements ShouldQueue
             ]);
         });
 
-        // event(new CampaignStatusUpdated($this->item->campaign));
+        $this->broadcastProgress($this->item->campaign_id);
     }
 
     /**
@@ -104,7 +106,33 @@ class GenerateContentJob implements ShouldQueue
             'error_message' => $exception->getMessage(),
         ]);
 
-        // Trigger websocket to show failure on frontend
-        // event(new CampaignStatusUpdated($this->item->campaign));
+        $this->broadcastProgress($this->item->campaign_id);
+    }
+
+    protected function broadcastProgress(int $campaignId): void
+    {
+        // RLS is already open here!
+        $campaign = Campaign::findOrFail($campaignId);
+
+        $items = CampaignItem::query()->where('campaign_id', $campaignId)->get();
+
+        $total = $items->count();
+        $completed = $items->where('status', CampaignStatus::Completed->value)->count();
+        $failed = $items->where('status', CampaignStatus::Failed->value)->count();
+
+        $percentage = $total > 0 ? (int) round((($completed + $failed) / $total) * 100) : 0;
+
+        $statusCounts = [
+            'pending' => $items->where('status', CampaignStatus::Pending->value)->count(),
+            'processing' => $items->where('status', CampaignStatus::Processing->value)->count(),
+            'completed' => $completed,
+            'failed' => $failed,
+        ];
+
+        event(new CampaignStatusUpdated(
+            $campaign->public_id,
+            $statusCounts,
+            $percentage
+        ));
     }
 }

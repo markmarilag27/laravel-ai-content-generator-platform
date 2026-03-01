@@ -73,9 +73,10 @@ class DecomposeCampaignJob implements ShouldQueue
                 $batch = Bus::batch($jobs)
                     ->allowFailures()
                     ->name("Campaign - {$campaign->title}")
-                    ->finally(function (Batch $batch) {
-                        // This runs when ALL jobs finish (success or fail)
-                        // We will update final campaign status here later in Ticket 2
+                    ->finally(function (Batch $batch) use ($campaign) {
+                        $campaign->update([
+                            'status' => CampaignStatus::Completed->value,
+                        ]);
                     })
                     ->dispatch();
 
