@@ -10,6 +10,7 @@ services:
     tty: true
     ports:
       - 8080:8080
+      - 5173:5173
       - '${REVERB_PORT:-6001}:6001'
     volumes:
       - ./:/var/www/html

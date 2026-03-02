@@ -6,12 +6,9 @@ use App\Traits\Database\InteractsWithPostgresRls;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('campaign.{publicId}', function (User $user, string $publicId) {
-    // 1. Temporarily open RLS for the auth check (since WebSockets hit a different route)
-    app(InteractsWithPostgresRls::class)
-        ->setPostgresContext($user->id, $user->workspace_id);
+    $rls = app(InteractsWithPostgresRls::class);
 
-    // 2. Try to find the campaign. If RLS blocks it, they don't own it!
-    $campaign = Campaign::where('public_id', $publicId)->first();
+    $rls->setPostgresContext($user->id, $user->workspace_id);
 
-    return $campaign !== null;
+    return Campaign::where('public_id', $publicId)->exists();
 });

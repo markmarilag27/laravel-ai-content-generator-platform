@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\MeController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ExtractVoiceController;
 use App\Http\Controllers\GenerateContentController;
@@ -57,6 +58,10 @@ Route::prefix('api')->group(function () {
         Route::post('logout', LogoutController::class)
             ->middleware(['auth'])
             ->name('logout');
+        // Current user
+        Route::get('me', MeController::class)
+            ->middleware('auth')
+            ->name('me');
     });
 });
 

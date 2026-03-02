@@ -16,13 +16,15 @@ class LoginController extends Controller
     public function __invoke(LoginRequest $request)
     {
         $remember = $request->boolean('remember');
+        $user = $request->findUser();
 
-        Auth::login($request->findUser(), $remember);
+        Auth::login($user, $remember);
 
         $request->session()->regenerate();
 
         return response()->json([
             'message' => 'Login successful.',
+            'user' => $user->load(['workspace:id,public_id'])
         ]);
     }
 }

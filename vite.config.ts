@@ -26,6 +26,9 @@ export default defineConfig({
       },
     }),
   ],
+  define: {
+    __APP_NAME__: JSON.stringify(process.env.APP_NAME),
+  },
   css: {
     modules: {
       localsConvention: 'camelCaseOnly',
@@ -38,8 +41,11 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
     hmr: {
-      host: 'localhost',
+      host: 'laravel.test',
+      clientPort: 5173,
     },
     watch: {
       ignored: ['**/storage/framework/views/**'],
