@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ class MeController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        return response()->json($user->load(['workspace:id,public_id']));
+        return response()->json(
+            new UserResource($user->load('workspace'))
+        );
     }
 }

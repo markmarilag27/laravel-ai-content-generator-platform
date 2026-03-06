@@ -18,7 +18,7 @@
     @vite(['resources/css/main.css', 'resources/js/main.ts'])
 </head>
 
-<body id="app" class="h-full">
+<body id="app" class="bg-app-bg font-sans text-slate-900  dark:text-slate-100 min-h-screen transition-colors duration-300">
 </body>
 
 </html>

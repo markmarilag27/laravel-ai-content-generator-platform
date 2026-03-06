@@ -3,9 +3,10 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\MeController;
+use App\Http\Controllers\BrandVoiceProfileController;
 use App\Http\Controllers\CampaignController;
-use App\Http\Controllers\ExtractVoiceController;
 use App\Http\Controllers\GenerateContentController;
+use App\Http\Controllers\ListContentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->group(function () {
@@ -23,15 +24,25 @@ Route::prefix('api')->group(function () {
         Route::name('brand-voice.')->prefix('brand-voice')->group(function () {
             /**
              * Extract Voice Profile
-             * Analysis of 3-5 text samples to create a linguistic DNA.
              */
-            Route::post('extract', ExtractVoiceController::class)->name('extract');
+            Route::name('extract.')->prefix('extract')->group(function () {
+                // List of extracts
+                Route::get('', [BrandVoiceProfileController::class, 'index'])->name('index');
+                // Store a new extract
+                Route::post('', [BrandVoiceProfileController::class, 'store'])->name('store');
+                // Show extract
+                Route::get('{profile}', [BrandVoiceProfileController::class, 'show'])->name('show');
+                // Update extract
+                Route::patch('{profile}', [BrandVoiceProfileController::class, 'update'])->name('update');
+                // Delete extract
+                Route::delete('{profile}', [BrandVoiceProfileController::class, 'destroy'])->name('destroy');
+            });
 
             /**
-             * Generate Content
-             * Uses a profile to generate text with the Quality Gate loop.
+             * Content
              */
-            Route::post('generate/{profile}', GenerateContentController::class)->name('generate');
+            Route::get('contents', ListContentController::class)->name('contents');
+            Route::post('generate/{profile}', GenerateContentController::class)->name('contents.generate');
         });
         /**
          **************************************************************************************

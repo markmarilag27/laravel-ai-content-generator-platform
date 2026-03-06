@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToWorkspace;
 use App\Models\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -20,13 +22,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $reference_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Workspace $workspace
  *
  * @method static \Database\Factories\CreditLedgerFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereMetadata($value)
@@ -36,13 +42,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger whereWorkspaceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditLedger withoutTrashed()
  *
  * @mixin \Eloquent
  */
 class CreditLedger extends Model
 {
     /** @use HasFactory<\Database\Factories\CreditLedgerFactory> */
-    use HasFactory, HasPublicId;
+    use BelongsToWorkspace, HasFactory, HasPublicId, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -64,7 +72,8 @@ class CreditLedger extends Model
      */
     protected $hidden = [
         'id',
-        'iworkspace_id',
+        'workspace_id',
+        'deleted_at',
     ];
 
     /**

@@ -17,9 +17,10 @@ return new class extends Migration
             $table->uuid('public_id');
             $table->foreignIdFor(Workspace::class)->constrained()->cascadeOnDelete();
             $table->string('name', 255);
+            $table->json('samples');
             $table->jsonb('profile');
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()->index();
         });
     }
 

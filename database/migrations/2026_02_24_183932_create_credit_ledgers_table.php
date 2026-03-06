@@ -22,6 +22,9 @@ return new class extends Migration
             $table->jsonb('metadata')->nullable();
             $table->nullableMorphs('reference');
             $table->timestamps();
+            $table->softDeletes()->index();
+
+            $table->index(['workspace_id', 'amount']);
         });
     }
 

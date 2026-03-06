@@ -1,4 +1,20 @@
-import { ITimestamps, TCampaignStatus, TISO8601String, TMetadata, TPlanName, TUserRole } from "./shared.type";
+import {
+  ITimestamps,
+  TCampaignStatus,
+  TISO8601String,
+  TMetadata,
+  TPlanName,
+  TUserRole,
+} from './shared.type';
+
+/**
+ * Represents the join table data between a User and a Workspace
+ */
+export interface IWorkspacePivot {
+  role: TUserRole; // Mapped from withPivot('role')
+  created_at: TISO8601String; // Mapped from withTimestamps()
+  updated_at: TISO8601String; // Mapped from withTimestamps()
+}
 
 export interface IUser extends ITimestamps {
   public_id: string;
@@ -11,20 +27,14 @@ export interface IUser extends ITimestamps {
   pivot?: IWorkspacePivot;
 }
 
-export interface IWorkspacePivot {
-  role: TUserRole;
-  created_at: TISO8601String;
-  updated_at: TISO8601String;
-}
-
 export interface IWorkspace extends ITimestamps {
   public_id: string;
   name: string;
+  credits_remaining: number;
   // Relationships
   plan?: IPlan;
   users?: IUser[];
   brand_voice_profiles?: IBrandVoiceProfile[];
-  campaigns?: ICampaign[];
 }
 
 export interface IPlan extends ITimestamps {
@@ -36,18 +46,18 @@ export interface IPlan extends ITimestamps {
 export interface IBrandVoiceProfile extends ITimestamps {
   public_id: string;
   name: string;
-  profile: TMetadata; // jsonb cast
+  samples: string[];
+  profile: TMetadata;
 }
 
 export interface ICampaign extends ITimestamps {
   public_id: string;
   title: string;
-  brief: TMetadata;
-  deadline: TISO8601String | null;
   status: TCampaignStatus;
+  deadline: TISO8601String | null;
   // Relationships
   brand_voice_profile?: IBrandVoiceProfile;
-  campaign_items?: ICampaignItem[];
+  items?: ICampaignItem[];
 }
 
 export interface ICampaignItem extends ITimestamps {
@@ -58,7 +68,6 @@ export interface ICampaignItem extends ITimestamps {
   output: TMetadata | null;
   tokens_used: number;
   status: TCampaignStatus;
-  retry_count: number;
   error_message: string | null;
 }
 
@@ -68,6 +77,14 @@ export interface ICreditLedger extends ITimestamps {
   type: string;
   description: string | null;
   metadata: TMetadata | null;
-  reference_type?: string;
-  reference_id?: number;
+}
+
+export interface IContent extends ITimestamps {
+  public_id: string;
+  body: string;
+  tokens_used: number;
+
+  // Relationships
+  workspace?: IWorkspace;
+  brand_voice_profile?: IBrandVoiceProfile;
 }

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $public_id
  * @property int $workspace_id
  * @property string $name
+ * @property array<array-key, mixed> $samples
  * @property array<array-key, mixed> $profile
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile whereProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile wherePublicId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile whereSamples($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile whereWorkspaceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BrandVoiceProfile withTrashed(bool $withTrashed = true)
@@ -52,6 +54,7 @@ class BrandVoiceProfile extends Model
     protected $fillable = [
         'workspace_id',
         'name',
+        'samples',
         'profile',
     ];
 
@@ -73,6 +76,7 @@ class BrandVoiceProfile extends Model
     protected function casts(): array
     {
         return [
+            'samples' => 'array',
             'profile' => 'array',
         ];
     }

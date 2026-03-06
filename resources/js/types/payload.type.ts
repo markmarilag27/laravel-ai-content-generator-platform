@@ -1,8 +1,9 @@
-import { TISO8601String } from "./shared.type";
+import { TISO8601String } from './shared.type';
 
 export interface ILoginPayload {
   email: string;
   password: string;
+  remember?: boolean;
 }
 
 export interface IExtractVoiceProfilePayload {
@@ -11,6 +12,7 @@ export interface IExtractVoiceProfilePayload {
 }
 
 export interface IGenerateContentPayload {
+  id: string;
   topic: string;
   content_type: string;
   word_count: number;

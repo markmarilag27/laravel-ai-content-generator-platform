@@ -8,6 +8,7 @@ use App\Contracts\AIProvider;
 use App\Exceptions\LowCreditsException;
 use App\Models\BrandVoiceProfile;
 use App\Models\Workspace;
+use Illuminate\Support\Facades\Cache;
 
 class BrandVoiceGenerator
 {
@@ -22,14 +23,25 @@ class BrandVoiceGenerator
      */
     public function generate(BrandVoiceProfile $profile, array $brief, Workspace $workspace): array
     {
+        $cacheKey = $this->getCacheKey($profile, $brief);
+
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+
         $currentBalance = $this->credits->getBalance($workspace);
 
         if ($currentBalance < 1) {
             throw new LowCreditsException;
         }
 
-        // Start recursion with 0 attempts and 0 initial tokens
-        return $this->attemptGeneration($profile, $brief, 0, 0);
+        $result = $this->attemptGeneration($profile, $brief, 0, 0);
+
+        if ($result['final_score'] >= 80) {
+            Cache::put($cacheKey, $result, now()->addDay());
+        }
+
+        return $result;
     }
 
     protected function attemptGeneration(
@@ -76,5 +88,19 @@ class BrandVoiceGenerator
     protected function getSystemPrompt(array $profile): string
     {
         return "Act as: {$profile['persona']}. Tone: {$profile['tone']}. Formality: {$profile['formality']}/10.";
+    }
+
+    /**
+     * Create a deterministic hash of the inputs.
+     */
+    protected function getCacheKey(BrandVoiceProfile $profile, array $brief): string
+    {
+        $inputString = json_encode([
+            'profile_id' => $profile->public_id,
+            'topic' => $brief['topic'] ?? '',
+            'word_count' => $brief['word_count'] ?? 0,
+        ]);
+
+        return 'ai_gen_'.md5($inputString);
     }
 }

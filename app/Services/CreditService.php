@@ -28,7 +28,7 @@ class CreditService
         ?string $description = null,
         array $meta = []
     ): CreditLedger {
-        return DB::transaction(function () use ($workspace, $tokens, $type, $description, $meta): CreditLedger {
+        $resource = DB::transaction(function () use ($workspace, $tokens, $type, $description, $meta): CreditLedger {
 
             // Ensure the monthly bucket has been filled (for capped plans)
             $this->ensureMonthlyAllotment($workspace);
@@ -49,6 +49,10 @@ class CreditService
 
             return $this->recordEntry($workspace->id, -$amountToDeduct, $type, $description, $meta);
         });
+
+        $workspace->cacheCreditInvalidate();
+
+        return $resource;
     }
 
     /**

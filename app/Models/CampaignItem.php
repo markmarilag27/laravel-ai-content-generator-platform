@@ -10,6 +10,7 @@ use App\Models\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -26,16 +27,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $error_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Campaign $campaign
  * @property-read \App\Models\Workspace $workspace
  *
  * @method static \Database\Factories\CampaignItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereCampaignId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereContentType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereErrorMessage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereOutput($value)
@@ -47,13 +51,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereWordCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem whereWorkspaceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CampaignItem withoutTrashed()
  *
  * @mixin \Eloquent
  */
 class CampaignItem extends Model
 {
     /** @use HasFactory<\Database\Factories\CampaignItemFactory> */
-    use BelongsToWorkspace, HasFactory, HasPublicId;
+    use BelongsToWorkspace, HasFactory, HasPublicId, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -82,6 +88,7 @@ class CampaignItem extends Model
         'id',
         'workspace_id',
         'campaign_id',
+        'deleted_at',
     ];
 
     /**

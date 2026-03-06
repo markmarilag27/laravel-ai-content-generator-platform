@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('retry_count')->default(0);
             $table->text('error_message')->nullable();
             $table->timestamps();
+            $table->softDeletes()->index();
         });
     }
 

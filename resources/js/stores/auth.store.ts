@@ -29,6 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const initialized = computed(() => isFetched.value);
   const isAuthenticated = computed(() => !!user.value);
+  const creditsRemaining = computed(() => user.value?.workspace?.credits_remaining ?? 0);
 
   async function login(credentials: ILoginPayload) {
     await authApi.login(credentials);
@@ -52,6 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     initialized,
     isAuthenticated,
+    creditsRemaining,
     login,
     logout,
     fetchUser,

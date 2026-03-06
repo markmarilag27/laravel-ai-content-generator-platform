@@ -1,3 +1,3 @@
 <template>
-  <div>Dashboard</div>
+  <div>Campaigns</div>
 </template>

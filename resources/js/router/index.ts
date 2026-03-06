@@ -27,13 +27,43 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        name: 'Dashboard',
-        component: () => import('@/pages/auth/DashboardPage.vue'),
+        name: 'BrandVoiceProfile',
+        component: () => import('@/pages/auth/BrandVoiceProfilePage.vue'),
       },
       {
-        path: 'campaigns/:id',
+        path: 'brand-voices/create',
+        name: 'BrandVoiceProfileCreate',
+        component: () => import('@/pages/auth/BrandVoiceProfileCreatePage.vue'),
+      },
+      {
+        path: 'brand-voices/:id/edit',
+        name: 'BrandVoiceProfileEdit',
+        component: () => import('@/pages/auth/BrandVoiceProfileEditPage.vue'),
+      },
+      {
+        path: 'contents',
+        name: 'Contents',
+        component: () => import('@/pages/auth/ContentPage.vue'),
+      },
+      {
+        path: 'contents/create',
+        name: 'ContentsCreate',
+        component: () => import('@/pages/auth/ContentCreatePage.vue'),
+      },
+      {
+        path: 'campaigns',
+        name: 'Campaigns',
+        component: () => import('@/pages/auth/CampaignPage.vue'),
+      },
+      {
+        path: 'campaigns/:brandVoiceProfile',
         name: 'CampaignDetail',
         component: () => import('@/pages/auth/CampaignDetailPage.vue'),
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: () => import('@/pages/auth/SettingPage.vue'),
       },
     ],
   },

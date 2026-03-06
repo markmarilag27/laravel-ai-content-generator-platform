@@ -1,84 +1,68 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth.store';
-
-const authStore = useAuthStore();
-
-const handleLogout = async () => {
-  await authStore.logout();
-  window.location.href = '/login';
-};
+import AppFooter from '@/components/AppFooter.vue';
+import AppHeader from '@/components/AppHeader.vue';
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex flex-col">
-    <header class="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex-shrink-0 flex items-center">
-            <RouterLink to="/" class="text-xl font-bold tracking-tight text-indigo-600">
-              AI Platform
-            </RouterLink>
-          </div>
+  <div class="layout-wrapper">
+    <AppHeader class="app-header" />
 
-          <nav class="hidden md:flex space-x-8">
-            <RouterLink
-              to="/"
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors duration-200"
-              active-class="border-indigo-500 text-slate-900"
-              exact-active-class="border-indigo-500 text-slate-900"
-              :class="[
-                $route.name !== 'Dashboard'
-                  ? 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                  : '',
-              ]"
-            >
-              Dashboard
-            </RouterLink>
-            <RouterLink
-              to="/campaigns"
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 transition-colors duration-200"
-              active-class="border-indigo-500 text-slate-900"
-              :class="[
-                !$route.path.startsWith('/campaigns')
-                  ? 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                  : '',
-              ]"
-            >
-              Campaigns
-            </RouterLink>
-          </nav>
-
-          <div class="flex items-center space-x-4">
-            <div class="hidden sm:block text-right">
-              <p class="text-xs font-semibold text-slate-900 leading-none">
-                {{ authStore.user?.name }}
-              </p>
-              <p class="text-[10px] text-slate-500 mt-1">
-                {{ authStore.user?.email }}
-              </p>
-            </div>
-            <button
-              @click="handleLogout"
-              class="ml-4 cursor-pointer text-sm font-semibold text-slate-600 hover:text-red-600 transition-colors"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main class="flex-1">
-      <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <main class="main-content dark:bg-slate-950">
+      <div class="content-container">
         <RouterView />
       </div>
     </main>
+
+    <AppFooter class="app-footer" />
   </div>
 </template>
 
 <style scoped>
-/* Ensure smooth transitions for the active border */
-nav a {
-  height: 64px;
+/* 1. Configuration: Define your heights here */
+.layout-wrapper {
+  --h-header: 64px;
+  --h-footer: 80px; /* Adjust this to match your AppFooter height */
+
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc; /* slate-50 */
+}
+
+/* 2. Header & Footer: Set explicit heights */
+.app-header {
+  height: var(--h-header);
+}
+
+.app-footer {
+  height: var(--h-footer);
+}
+
+/* 3. Main: The calculation logic */
+.main-content {
+  /* Subtract header and footer from 100dvh (Dynamic Viewport Height).
+     This ensures the footer is pushed to the bottom on short pages.
+  */
+  min-height: calc(100dvh - var(--h-header) - var(--h-footer));
+  width: 100%;
+}
+
+/* 4. Padding & Max Width */
+.content-container {
+  max-width: 80rem; /* max-w-7xl */
+  margin: 0 auto;
+  padding: 2rem 1rem; /* py-8 px-4 */
+}
+
+@media (min-width: 640px) {
+  .content-container {
+    padding: 2rem 1.5rem; /* sm:px-6 */
+  }
+}
+
+/* Ensure nav links in header match the 64px height */
+:deep(nav a) {
+  height: var(--h-header);
+  display: flex;
+  align-items: center;
 }
 </style>

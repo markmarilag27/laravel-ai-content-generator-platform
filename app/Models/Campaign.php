@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CampaignStatus $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\BrandVoiceProfile $brandVoiceProfile
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CampaignItem> $campaignItems
  * @property-read int|null $campaign_items_count
@@ -32,11 +34,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereBrandVoiceProfileId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereBrief($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereDeadline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereJobBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign wherePublicId($value)
@@ -44,13 +48,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereWorkspaceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign withoutTrashed()
  *
  * @mixin \Eloquent
  */
 class Campaign extends Model
 {
     /** @use HasFactory<\Database\Factories\CampaignFactory> */
-    use BelongsToWorkspace, HasFactory, HasPublicId;
+    use BelongsToWorkspace, HasFactory, HasPublicId, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -77,6 +83,7 @@ class Campaign extends Model
         'workspace_id',
         'brand_voice_profile_id',
         'job_batch_id',
+        'deleted_at',
     ];
 
     /**
@@ -98,11 +105,6 @@ class Campaign extends Model
      * Relationships
      **********************************************************
      */
-    public function workspace(): BelongsTo
-    {
-        return $this->belongsTo(Workspace::class);
-    }
-
     public function brandVoiceProfile(): BelongsTo
     {
         return $this->belongsTo(BrandVoiceProfile::class);

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -24,7 +25,7 @@ class LoginController extends Controller
 
         return response()->json([
             'message' => 'Login successful.',
-            'user' => $user->load(['workspace:id,public_id'])
+            'data' => new UserResource($user->load('workspace')),
         ]);
     }
 }

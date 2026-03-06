@@ -25,6 +25,7 @@ return new class extends Migration
             $table->timestamp('deadline')->nullable();
             $table->enum('status', CampaignStatus::values());
             $table->timestamps();
+            $table->softDeletes()->index();
         });
     }
 

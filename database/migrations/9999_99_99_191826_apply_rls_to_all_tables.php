@@ -18,6 +18,7 @@ return new class extends Migration
         'credit_ledgers',
         'campaigns',
         'campaign_items',
+        'contents',
     ];
 
     /**

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $campaigns_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditLedger> $creditLedgers
  * @property-read int|null $credit_ledgers_count
+ * @property-read int $credits_remaining
  * @property-read \App\Models\Plan $plan
  * @property-read \App\Models\WorkspaceUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
@@ -109,5 +111,31 @@ class Workspace extends Model
     public function campaignItems(): HasMany
     {
         return $this->hasMany(CampaignItem::class);
+    }
+
+    /**
+     **********************************************************
+     * Helpers
+     **********************************************************
+     */
+
+    /**
+     * Get the total remaining credits by summing the ledger.
+     */
+    public function getCreditsRemainingAttribute(): int
+    {
+        return (int) Cache::remember($this->cacheCreditKey(), now()->addHour(), function () {
+            return (int) $this->creditLedgers()->sum('amount');
+        });
+    }
+
+    public function cacheCreditInvalidate(): void
+    {
+        Cache::forget($this->cacheCreditKey());
+    }
+
+    public function cacheCreditKey(): string
+    {
+        return "workspace-{$this->public_id}-credits";
     }
 }
