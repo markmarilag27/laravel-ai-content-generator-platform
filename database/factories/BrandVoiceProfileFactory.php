@@ -20,6 +20,11 @@ class BrandVoiceProfileFactory extends Factory
         return [
             'public_id' => Str::uuid(),
             'name' => fake()->catchPhrase().' Voice',
+            'samples' => [
+                fake()->paragraph(),
+                fake()->paragraph(),
+                fake()->paragraph(),
+            ],
             'profile' => [
                 'tone' => fake()->randomElement(['Professional', 'Casual', 'Humorous', 'Authoritative']),
                 'vocabulary' => [fake()->word(), fake()->word(), fake()->word()],
