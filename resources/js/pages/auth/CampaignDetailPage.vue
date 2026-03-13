@@ -5,7 +5,6 @@ import { useQueryClient } from '@tanstack/vue-query';
 import { Calendar, RefreshCw, X, Copy, Check, FileText } from 'lucide-vue-next';
 import { useCampaigns } from '@/composables/useCampaigns';
 import { useWebsocketStore } from '@/stores/websocket.store';
-import { QUERY_KEYS } from '@/lib/constant.lib';
 import type { IBroadcastCampaign, ICampaignItem } from '@/types';
 import CampaignItemListRow from '@/components/campaigns/CampaignItemListRow.vue';
 import { useClipboard } from '@/composables/useClipboard';
@@ -18,8 +17,6 @@ const { useDetailQuery, useListItemsQuery } = useCampaigns();
 
 const publicId = ref(route.params.id as string);
 const page = ref(1);
-const progress = ref(0);
-const status = ref('pending');
 
 const { data, isLoading } = useDetailQuery(publicId);
 const {
@@ -29,6 +26,9 @@ const {
 } = useListItemsQuery(publicId, page);
 
 const campaign = computed(() => data.value?.data.data);
+
+const progress = ref(campaign.value?.progress_percentage ?? 0);
+const status = ref(campaign.value?.status ?? 'pending');
 
 const isModalOpen = ref(false);
 const selectedItem = ref<ICampaignItem | null>(null);
@@ -70,8 +70,7 @@ onMounted(() => {
         }
 
         if (e.percentage_complete === 100) {
-          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.currentUser] });
-          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.campaign] });
+          queryClient.invalidateQueries();
           refetch();
         }
       });
