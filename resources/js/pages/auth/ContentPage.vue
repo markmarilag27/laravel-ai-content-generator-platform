@@ -84,6 +84,21 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown));
       <AppLoader message="Fetching your content library..." />
     </div>
 
+    <div
+      v-else-if="contents.length === 0"
+      class="flex flex-col items-center justify-center py-20 px-6 bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl text-center"
+    >
+      <div
+        class="size-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 mb-4"
+      >
+        <Newspaper :size="32" />
+      </div>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">No content found</h3>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+        Your generated content library is currently empty. Start by creating a new piece of content.
+      </p>
+    </div>
+
     <div v-else class="grid gap-4">
       <div
         v-for="item in contents"
