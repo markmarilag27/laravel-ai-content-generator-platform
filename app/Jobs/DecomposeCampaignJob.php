@@ -44,7 +44,6 @@ class DecomposeCampaignJob implements ShouldQueue
     public function handle(): void
     {
         DB::transaction(function () {
-            Log::info(json_encode(Campaign::query()->get()->toArray(), JSON_PRETTY_PRINT));
             $campaign = Campaign::query()->findOrFail($this->campaignId);
 
             try {
@@ -74,6 +73,7 @@ class DecomposeCampaignJob implements ShouldQueue
                     ->allowFailures()
                     ->name("Campaign - {$campaign->title}")
                     ->finally(function (Batch $batch) use ($campaign) {
+                        Log::info("Campaign {$campaign->public_id} is done");
                         $campaign->update([
                             'status' => CampaignStatus::Completed->value,
                         ]);

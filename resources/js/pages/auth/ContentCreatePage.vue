@@ -7,7 +7,6 @@ import type { IGenerateContentPayload } from '@/types';
 
 const router = useRouter();
 const { useListQuery, useGenerateMutation } = useBrandVoices();
-
 const { data: voicesData } = useListQuery(ref(1));
 const profiles = computed(() => voicesData.value?.data.data ?? []);
 
@@ -15,7 +14,7 @@ const page = ref(1);
 
 const selectedProfileId = ref('');
 const { form, errors, submit, clearError } = useForm<IGenerateContentPayload>({
-  id: selectedProfileId.value,
+  id: '',
   topic: '',
   content_type: '',
   word_count: 500,

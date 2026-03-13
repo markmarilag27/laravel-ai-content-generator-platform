@@ -50,13 +50,24 @@ export interface IBrandVoiceProfile extends ITimestamps {
   profile: TMetadata;
 }
 
+export interface ICampaignBrief {
+  goal: string;
+  topic: string;
+  quantities: Record<string, number>;
+  word_counts: Record<string, number>;
+}
+
 export interface ICampaign extends ITimestamps {
   public_id: string;
   title: string;
   status: TCampaignStatus;
+  status_class: string;
   deadline: TISO8601String | null;
+  brief: ICampaignBrief;
   // Relationships
   brand_voice_profile?: IBrandVoiceProfile;
+  progress_percentage: number;
+  campaign_items_count: number;
   items?: ICampaignItem[];
 }
 
@@ -66,7 +77,8 @@ export interface ICampaignItem extends ITimestamps {
   topic: string;
   word_count: number;
   output: TMetadata | null;
-  tokens_used: number;
+  content: string;
+  credit_used: number;
   status: TCampaignStatus;
   error_message: string | null;
 }
@@ -87,4 +99,10 @@ export interface IContent extends ITimestamps {
   // Relationships
   workspace?: IWorkspace;
   brand_voice_profile?: IBrandVoiceProfile;
+}
+
+export interface IBroadcastCampaign {
+  public_id: string;
+  status_counts: number;
+  percentage_complete: number;
 }

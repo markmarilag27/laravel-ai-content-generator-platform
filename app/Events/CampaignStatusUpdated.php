@@ -42,4 +42,12 @@ class CampaignStatusUpdated implements ShouldBroadcastNow
             'percentage_complete' => $this->percentageComplete,
         ];
     }
+
+    /**
+     * The event's broadcast name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'CampaignStatusUpdated';
+    }
 }

@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import { Sparkles, Coins, LogOut, Sun, Moon, Menu, X } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth.store';
 
+const route = useRoute();
 const authStore = useAuthStore();
 const isDark = ref(false);
 const isMobileMenuOpen = ref(false);
 const headerRef = ref<HTMLElement | null>(null);
 
 const links = ref([
-  { text: 'Brand Voices', to: '/' },
-  { text: 'Contents', to: '/contents' },
-  { text: 'Campaigns', to: '/campaigns' },
-  { text: 'Settings', to: '/settings' },
+  { text: 'Brand Voices', to: '/', base: '/brand-voice' },
+  { text: 'Contents', to: '/contents', base: '/contents' },
+  { text: 'Campaigns', to: '/campaigns', base: '/campaigns' },
 ]);
+
+const isLinkActive = (link: { to: string; base: string }) => {
+  if (link.to === '/' && route.path === '/') return true;
+  if (link.to === '/') return route.path.startsWith('/brand-voice');
+  return route.path.startsWith(link.base);
+};
 
 const toggleTheme = () => {
   isDark.value = !isDark.value;
@@ -73,8 +79,7 @@ onUnmounted(() => {
           :key="index"
           :to="link.to"
           class="text-sm font-medium transition-colors hover:text-primary dark:hover:text-primary"
-          inactive-class="text-slate-600 dark:text-slate-400"
-          exact-active-class="text-primary"
+          :class="[isLinkActive(link) ? 'text-primary' : 'text-slate-600 dark:text-slate-400']"
         >
           {{ link.text }}
         </RouterLink>
@@ -133,8 +138,11 @@ onUnmounted(() => {
               :to="link.to"
               @click="isMobileMenuOpen = false"
               class="block rounded-lg px-3 py-2.5 text-base font-medium transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 force-h-auto"
-              inactive-class="text-slate-600 dark:text-slate-400"
-              exact-active-class="text-primary bg-primary/5"
+              :class="[
+                isLinkActive(link)
+                  ? 'text-primary bg-primary/5 dark:bg-primary/10'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50',
+              ]"
             >
               {{ link.text }}
             </RouterLink>

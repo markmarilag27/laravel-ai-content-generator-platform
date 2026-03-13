@@ -5,17 +5,18 @@ import { Plus, Newspaper, Hash, Coins, Calendar, X, Copy, Check } from 'lucide-v
 import { useBrandVoices } from '@/composables/useBrandVoices';
 import AppLoader from '@/components/AppLoader.vue';
 import { IContent } from '@/types';
+import { useClipboard } from '@/composables/useClipboard';
 
 const router = useRouter();
 const currentPage = ref(1);
 
 const { useListContentQuery } = useBrandVoices();
+const { isCopied, copy } = useClipboard();
 const { data, isLoading } = useListContentQuery(currentPage);
 
 const contents = computed<IContent[]>(() => data.value?.data.data ?? []);
 
 const selectedContent = ref<IContent | null>(null);
-const isCopied = ref(false);
 
 const openModal = (item: IContent): void => {
   selectedContent.value = item;
@@ -29,7 +30,7 @@ const closeModal = (): void => {
 const copyToClipboard = async (): Promise<void> => {
   if (!selectedContent.value) return;
   try {
-    await navigator.clipboard.writeText(selectedContent.value.body);
+    await copy(selectedContent.value.body);
     isCopied.value = true;
     setTimeout(() => (isCopied.value = false), 2000);
   } catch (err) {
@@ -193,7 +194,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown));
               >
                 <span class="flex items-center gap-1.5"
                   ><Coins :size="14" class="text-amber-500" />
-                  {{ selectedContent.tokens_used }} Tokens</span
+                  {{ selectedContent.tokens_used }}</span
                 >
                 <span class="flex items-center gap-1.5"
                   ><Calendar :size="14" /> {{ formatDate(selectedContent.created_at) }}</span

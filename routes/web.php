@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\MeController;
 use App\Http\Controllers\BrandVoiceProfileController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\CampaignItemController;
 use App\Http\Controllers\GenerateContentController;
 use App\Http\Controllers\ListContentController;
 use Illuminate\Support\Facades\Route;
@@ -50,8 +51,16 @@ Route::prefix('api')->group(function () {
          **************************************************************************************
          */
         Route::name('campaigns.')->prefix('campaigns')->group(function () {
+            // List campaigns
+            Route::get('/', [CampaignController::class, 'index'])->name('index');
             // Store new campaigns
-            Route::post('{profile}', CampaignController::class)->name('store');
+            Route::post('{profile}', [CampaignController::class, 'store'])->name('store');
+            // Show campaign
+            Route::get('{campaign}', [CampaignController::class, 'show'])->name('show');
+            // Delete campaign
+            Route::delete('{campaign}', [CampaignController::class, 'destroy'])->name('destroy');
+            // List campaign items
+            Route::get('{campaign}/items', CampaignItemController::class)->name('items');
         });
     });
 

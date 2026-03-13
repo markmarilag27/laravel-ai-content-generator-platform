@@ -122,6 +122,12 @@ class GenerateContentJob implements ShouldQueue
 
         $percentage = $total > 0 ? (int) round((($completed + $failed) / $total) * 100) : 0;
 
+        if ($percentage === 100 && $campaign->status !== CampaignStatus::Completed) {
+            $campaign->update([
+                'status' => CampaignStatus::Completed,
+            ]);
+        }
+
         $statusCounts = [
             'pending' => $items->where('status', CampaignStatus::Pending->value)->count(),
             'processing' => $items->where('status', CampaignStatus::Processing->value)->count(),

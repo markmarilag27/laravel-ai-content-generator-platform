@@ -8,6 +8,7 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToWorkspace;
 use App\Models\Traits\HasPublicId;
+use App\Traits\Database\InteractsWithPostgresRls;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -59,7 +60,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use BelongsToWorkspace, HasFactory, HasPublicId, Notifiable, SoftDeletes;
+    use BelongsToWorkspace, HasFactory, HasPublicId, InteractsWithPostgresRls, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

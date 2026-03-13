@@ -15,6 +15,9 @@ import type {
   ICreateCampaignPayload,
   ICampaignResponse,
   IListContentResponse,
+  IPaginatedResponse,
+  ICampaign,
+  ICampaignItem,
 } from '@/types';
 
 /**
@@ -71,10 +74,40 @@ export const brandVoiceApi = {
 };
 
 /**
- * Campaigns Module
- * POST /api/campaigns/{profile}
+ * Campaigns Module (/api/campaigns)
  */
 export const campaignsApi = {
+  /**
+   * List all campaigns
+   * GET /api/campaigns
+   */
+  index: () => httpClient.get<IPaginatedResponse<ICampaign>>('/campaigns'),
+
+  /**
+   * Store a new campaign for a specific profile
+   * POST /api/campaigns/{profileId}
+   */
   store: (profileId: string, payload: ICreateCampaignPayload) =>
     httpClient.post<ICampaignResponse>(`/campaigns/${profileId}`, payload),
+
+  /**
+   * Store a new campaign for a specific profile
+   * GET /api/campaigns/{campaignId}
+   */
+  show: (campaignId: string) => httpClient.get<ICampaignResponse>(`/campaigns/${campaignId}`),
+
+  /**
+   * Delete a specific campaign
+   * DELETE /api/campaigns/{campaignId}
+   */
+  destroy: (campaignId: string) => httpClient.delete(`/campaigns/${campaignId}`),
+
+  /**
+   * List of campaign items
+   * GET /api/campaigns/{campaignId}/items
+   */
+  listItems: (campaignId: string, page: number = 1) =>
+    httpClient.get<IPaginatedResponse<ICampaignItem>>(
+      `/campaigns/${campaignId}/items?page=${page}`
+    ),
 };

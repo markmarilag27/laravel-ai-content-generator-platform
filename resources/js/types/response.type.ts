@@ -1,4 +1,4 @@
-import { IContent, IUser } from './model.type';
+import { ICampaign, IContent, IUser } from './model.type';
 import { ITimestamps, TCampaignStatus } from './shared.type';
 
 export interface IErrorResponse {
@@ -58,12 +58,7 @@ export interface IGenerateContentResponse extends IBaseResponse {
 
 export interface IListContentResponse extends IPaginatedResponse<IContent> {}
 
-export interface ICampaignQueuedData {
-  campaign_id: string;
-  status: TCampaignStatus;
-}
-
-export interface ICampaignResponse extends IDataResponse<ICampaignQueuedData> {}
+export interface ICampaignResponse extends IDataResponse<ICampaign> {}
 
 export interface IPaginatedResponse<T> {
   data: T[];

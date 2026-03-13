@@ -8,6 +8,8 @@ export const QUERY_KEYS = {
 
   // Campaigns
   campaigns: 'campaigns',
+  campaign: 'campaign',
+  campaignItems: 'campaignItems',
 
   // Content Generation
   generatedContent: 'generatedContent',
