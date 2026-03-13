@@ -9,7 +9,6 @@ export const useWebsocketStore = defineStore('websocket', () => {
   function connect() {
     if (echo.value) return;
     echo.value = createEchoInstance();
-    console.log('⚡ WebSocket Connection Initialized (Session Auth)');
   }
 
   function disconnect() {

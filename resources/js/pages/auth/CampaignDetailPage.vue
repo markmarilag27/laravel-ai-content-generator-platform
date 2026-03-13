@@ -19,6 +19,7 @@ const { useDetailQuery, useListItemsQuery } = useCampaigns();
 const publicId = ref(route.params.id as string);
 const page = ref(1);
 const progress = ref(0);
+const status = ref('pending');
 
 const { data, isLoading } = useDetailQuery(publicId);
 const {
@@ -61,8 +62,7 @@ onMounted(() => {
   if (wsStore.echo) {
     wsStore.echo
       .private(`campaign.${publicId.value}`)
-      .listen('CampaignStatusUpdated', (e: IBroadcastCampaign) => {
-        console.log('WS Event Received:', e);
+      .listen('.CampaignStatusUpdated', (e: IBroadcastCampaign) => {
         progress.value = e.percentage_complete;
 
         if (e.percentage_complete === 100) {
@@ -80,10 +80,14 @@ onUnmounted(() => {
 });
 
 watch(
-  () => campaign.value,
-  (data) => {
-    if (data?.progress_percentage) {
-      progress.value = data.progress_percentage;
+  () => !!campaign.value,
+  () => {
+    if (campaign.value?.progress_percentage) {
+      progress.value = campaign.value.progress_percentage;
+    }
+
+    if (campaign.value?.status) {
+      status.value = campaign.value.status;
     }
   }
 );
@@ -113,7 +117,7 @@ const formatDate = (date: string | null) => {
               :class="campaign.status_class"
               class="px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase"
             >
-              {{ campaign.status }}
+              {{ status }}
             </span>
           </div>
           <p class="text-slate-500 text-sm font-medium flex items-center gap-2">
