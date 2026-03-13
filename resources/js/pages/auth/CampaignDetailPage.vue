@@ -65,7 +65,12 @@ onMounted(() => {
       .listen('.CampaignStatusUpdated', (e: IBroadcastCampaign) => {
         progress.value = e.percentage_complete;
 
+        if (e.percentage_complete > 0 && status.value === 'pending') {
+          status.value = 'processing';
+        }
+
         if (e.percentage_complete === 100) {
+          queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.currentUser] });
           queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.campaign] });
           refetch();
         }
